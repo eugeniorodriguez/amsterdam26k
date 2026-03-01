@@ -1,6 +1,6 @@
 window.TRIP_META = {
   title: "Que ver en Amsterdam en 3 dias",
-  subtitle: "Plan interactivo para 4 familias con chicos de 12 a 18 anos",
+  subtitle: "Viaje familiar: llegada vie 10 jul 2026, regreso lun 13 jul 2026",
   warning: "Horarios y entradas cambian; verifica siempre en la web oficial."
 };
 
@@ -8,9 +8,9 @@ window.DAY_ORDER = ["day1", "day2", "day3"];
 window.SEGMENT_ORDER = ["morning", "afternoon", "night"];
 
 window.DAY_LABELS = {
-  day1: "Dia 1",
-  day2: "Dia 2",
-  day3: "Dia 3"
+  day1: "Vie 10 Jul (llegada)",
+  day2: "Sab 11 Jul",
+  day3: "Dom 12 Jul"
 };
 
 window.SEGMENT_LABELS = {
@@ -19,7 +19,81 @@ window.SEGMENT_LABELS = {
   night: "Noche"
 };
 
+window.HOTEL_REFERENCE = {
+  id: "hotel-best-western-amsterdam",
+  nombre: "Best Western Amsterdam",
+  direccion: "Voorburgstraat 250, Amsterdam 1059 VD",
+  barrio: "Amsterdam Nieuw-West",
+  telefono_hotel: "+31 85 2733568",
+  telefono_reservas: "+1 (800) 780-7234",
+  checkin: "15:00 CEST",
+  checkout: "11:00 CEST",
+  lat: 52.3506,
+  lng: 4.8395
+};
+
+window.TRAVEL_LOGISTICS = {
+  hotel: window.HOTEL_REFERENCE,
+  flights: [
+    {
+      id: "outbound-eju7890",
+      ruta: "Malaga -> Amsterdam",
+      numero: "EJU7890",
+      salida: "Viernes 10 julio 2026, 11:20",
+      llegada: "Viernes 10 julio 2026, 14:25",
+      equipaje_apertura: "09:20",
+      equipaje_cierre: "10:40"
+    },
+    {
+      id: "inbound-hv6227",
+      ruta: "Amsterdam (Schiphol) -> Malaga",
+      numero: "HV6227",
+      salida: "Lunes 13 julio 2026, 20:15",
+      llegada: "Lunes 13 julio 2026, 23:15",
+      nota: "Recomendado salir del hotel hacia Schiphol sobre las 17:00-17:30."
+    }
+  ]
+};
+
 window.POIS = [
+  {
+    id: "hotel-best-western-amsterdam",
+    nombre: "Best Western Amsterdam (Hotel base)",
+    descripcion_corta: "Hotel de referencia para iniciar/cerrar cada jornada.",
+    categoria: "hotel",
+    tags: ["hotel", "base", "check-in", "referencia"],
+    barrio: "Amsterdam Nieuw-West",
+    direccion: "Voorburgstraat 250, Amsterdam 1059 VD",
+    enlace_oficial: "https://www.bestwestern.com/",
+    reserva_requerida: true,
+    notas_reserva: "Check-in 15:00 / Check-out 11:00 (CEST).",
+    indoor: true,
+    apto_lluvia: true,
+    duracion_min: 30,
+    coste_nivel: "€€",
+    edad_recomendada: "Todas",
+    lat: 52.3506,
+    lng: 4.8395
+  },
+  {
+    id: "schiphol-airport",
+    nombre: "Amsterdam Schiphol Airport",
+    descripcion_corta: "Aeropuerto principal: llegadas y salida del viaje.",
+    categoria: "transporte",
+    tags: ["aeropuerto", "vuelo", "traslado", "schiphol"],
+    barrio: "Schiphol",
+    direccion: "Aankomstpassage 1, 1118 AX Schiphol",
+    enlace_oficial: "https://www.schiphol.nl",
+    reserva_requerida: false,
+    notas_reserva: "Para el vuelo de vuelta, salir del hotel entre 17:00 y 17:30.",
+    indoor: true,
+    apto_lluvia: true,
+    duracion_min: 60,
+    coste_nivel: "€",
+    edad_recomendada: "Todas",
+    lat: 52.3105,
+    lng: 4.7683
+  },
   {
     id: "nemo-science-museum",
     nombre: "NEMO Science Museum",
@@ -671,26 +745,25 @@ window.POIS = [
 window.DEFAULT_ITINERARY = {
   day1: {
     morning: [
-      { entryId: "d1m1", planA: "amsterdam-central-station", planB: "nemo-science-museum" },
-      { entryId: "d1m2", planA: "dam-square", planB: "anne-frank-house" },
-      { entryId: "d1m3", planA: "nine-straatjes", planB: "maritime-museum" },
-      { entryId: "d1m4", planA: "jordaan-canal-walk", planB: "moco-museum" }
+      { entryId: "d1m1", planA: "schiphol-airport", planB: "schiphol-airport" },
+      { entryId: "d1m2", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" }
     ],
     afternoon: [
-      { entryId: "d1a1", planA: "canal-cruise-central", planB: "rijksmuseum" },
-      { entryId: "d1a2", planA: "foodhallen", planB: "foodhallen" },
-      { entryId: "d1a3", planA: "vondelpark", planB: "van-gogh-museum" }
+      { entryId: "d1a1", planA: "vondelpark", planB: "rijksmuseum" },
+      { entryId: "d1a2", planA: "foodhallen", planB: "moco-museum" },
+      { entryId: "d1a3", planA: "museumplein", planB: "van-gogh-museum" }
     ],
     night: [
-      { entryId: "d1n1", planA: "rembrandtplein", planB: "eye-filmmuseum" },
-      { entryId: "d1n2", planA: "begijnhof", planB: "museumplein" }
+      { entryId: "d1n1", planA: "de-pijp-stroll", planB: "foodhallen" },
+      { entryId: "d1n2", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" }
     ]
   },
   day2: {
     morning: [
-      { entryId: "d2m1", planA: "ferry-noord", planB: "eye-filmmuseum" },
-      { entryId: "d2m2", planA: "adam-lookout", planB: "this-is-holland" },
-      { entryId: "d2m3", planA: "ndsm-wharf", planB: "straat-museum" }
+      { entryId: "d2m1", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" },
+      { entryId: "d2m2", planA: "ferry-noord", planB: "eye-filmmuseum" },
+      { entryId: "d2m3", planA: "adam-lookout", planB: "this-is-holland" },
+      { entryId: "d2m4", planA: "ndsm-wharf", planB: "straat-museum" }
     ],
     afternoon: [
       { entryId: "d2a1", planA: "straat-museum", planB: "nxt-museum" },
@@ -699,14 +772,15 @@ window.DEFAULT_ITINERARY = {
     ],
     night: [
       { entryId: "d2n1", planA: "canal-cruise-central", planB: "foodhallen" },
-      { entryId: "d2n2", planA: "rembrandtplein", planB: "amaze-amsterdam" }
+      { entryId: "d2n2", planA: "rembrandtplein", planB: "amaze-amsterdam" },
+      { entryId: "d2n3", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" }
     ]
   },
   day3: {
     morning: [
-      { entryId: "d3m1", planA: "rijksmuseum", planB: "van-gogh-museum" },
-      { entryId: "d3m2", planA: "museumplein", planB: "moco-museum" },
-      { entryId: "d3m3", planA: "vondelpark", planB: "heineken-experience" }
+      { entryId: "d3m1", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" },
+      { entryId: "d3m2", planA: "anne-frank-house", planB: "maritime-museum" },
+      { entryId: "d3m3", planA: "nine-straatjes", planB: "rijksmuseum" }
     ],
     afternoon: [
       { entryId: "d3a1", planA: "albert-cuyp-market", planB: "tropenmuseum" },
@@ -714,13 +788,17 @@ window.DEFAULT_ITINERARY = {
       { entryId: "d3a3", planA: "oosterpark", planB: "maritime-museum" }
     ],
     night: [
-      { entryId: "d3n1", planA: "de-pijp-stroll", planB: "foodhallen" },
-      { entryId: "d3n2", planA: "amsterdamse-bos", planB: "eye-filmmuseum" }
+      { entryId: "d3n1", planA: "canal-cruise-central", planB: "eye-filmmuseum" },
+      { entryId: "d3n2", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" }
     ]
   }
 };
 
 window.CHECKLIST_ITEMS = [
+  { id: "chk-outbound-bagdrop", grupo: "vuelos", texto: "10/07: facturar equipaje entre 09:20 y 10:40 para EJU7890." },
+  { id: "chk-outbound-arrival", grupo: "vuelos", texto: "10/07 llegada 14:25 a Schiphol, luego traslado al hotel." },
+  { id: "chk-return-transfer", grupo: "vuelos", texto: "13/07 salir del hotel 17:00-17:30 para vuelo HV6227 (20:15)." },
+  { id: "chk-return-checkout", grupo: "vuelos", texto: "Check-out hotel a las 11:00 CEST; dejar maletas en consigna." },
   { id: "chk-ov-card", grupo: "transporte", texto: "Comprar o activar OVpay / tarjeta para tranvia y metro." },
   { id: "chk-ferry", grupo: "transporte", texto: "Recordar ferry gratis a Noord desde Centraal." },
   { id: "chk-bike-rules", grupo: "transporte", texto: "Repasar reglas de carril bici para todo el grupo." },
@@ -738,6 +816,7 @@ window.CHECKLIST_ITEMS = [
 ];
 
 window.CATEGORIES = [
+  "hotel",
   "museo",
   "paseo",
   "mirador",

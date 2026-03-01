@@ -25,6 +25,12 @@ Stack: `HTML + CSS + JavaScript vanilla`.
 
 ## Personalizar el viaje en `data.js`
 
+### Hotel y vuelos reales
+
+- `window.HOTEL_REFERENCE`: define hotel base (direccion, telefonos, check-in/out, lat/lng).
+- `window.TRAVEL_LOGISTICS`: define vuelos de ida/vuelta y notas operativas.
+- El hotel se pinta siempre como referencia fija en el mapa, aunque cambies filtros.
+
 ### Editar POIs
 Cada lugar esta en `window.POIS` y usa este formato:
 

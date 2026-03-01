@@ -221,6 +221,38 @@ label.file-chip:focus-within,
   font-size: 0.9rem;
 }
 
+.travel-strip {
+  margin: 10px clamp(14px, 3vw, 36px) 0;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--brand) 24%, var(--border));
+}
+
+.travel-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  background: var(--surface-2);
+}
+
+.travel-card h3 {
+  margin: 0 0 6px;
+  font-size: 0.86rem;
+}
+
+.travel-card p {
+  margin: 3px 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.travel-card-hotel {
+  border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
+  background: color-mix(in srgb, var(--brand) 10%, var(--surface-2));
+}
+
 .tab-nav {
   display: flex;
   flex-wrap: wrap;
@@ -607,6 +639,28 @@ label.file-chip {
   color: #ff8c85;
 }
 
+.hotel-ref-icon {
+  background: transparent;
+  border: none;
+}
+
+.hotel-ref-icon span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff4b3e, #ff2f1e);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(255, 55, 41, 0.4);
+}
+
 .map-note {
   margin: 0;
   color: var(--muted);
@@ -685,6 +739,10 @@ label.file-chip {
   background: linear-gradient(135deg, #49a1ff, #2f72df);
 }
 
+.cat-hotel {
+  background: linear-gradient(135deg, #ff5c4b, #ff2f1e);
+}
+
 .cat-paseo,
 .cat-parque,
 .cat-zoo {
@@ -732,6 +790,10 @@ label.file-chip {
     grid-template-columns: 1fr 1fr;
   }
 
+  .travel-strip {
+    grid-template-columns: 1fr;
+  }
+
   .map-layout {
     grid-template-columns: 1fr;
   }
@@ -750,6 +812,11 @@ label.file-chip {
   .tips-layout,
   .options-grid {
     grid-template-columns: 1fr;
+  }
+
+  .travel-strip {
+    margin-top: 8px;
+    padding: 8px;
   }
 
   .tab-nav {

@@ -16,6 +16,7 @@
 
   const DAYS = window.DAY_ORDER || ["day1", "day2", "day3"];
   const SEGMENTS = window.SEGMENT_ORDER || ["morning", "afternoon", "night"];
+  const HOTEL_ID = window.HOTEL_REFERENCE?.id || "hotel-best-western-amsterdam";
   const poiById = new Map((window.POIS || []).map((poi) => [poi.id, poi]));
 
   let appState = buildInitialState();
@@ -24,8 +25,10 @@
 
   let map;
   let markerLayer;
+  let fixedMarkerLayer;
   let routeLine;
   let userMarker;
+  let hotelMarker;
   let mapInitialized = false;
   let markersByPoiId = new Map();
   let distanceByPoi = new Map();
@@ -39,6 +42,7 @@
   function init() {
     cacheDom();
     injectTripMeta();
+    renderTravelLogistics();
     populateCategoryFilter();
     bindGlobalEvents();
     renderDaySwitcher();
@@ -56,6 +60,7 @@
     dom.appTitle = document.getElementById("app-title");
     dom.appSubtitle = document.getElementById("app-subtitle");
     dom.globalWarning = document.getElementById("global-warning");
+    dom.travelStrip = document.getElementById("travel-strip");
 
     dom.daySwitcher = document.getElementById("day-switcher");
     dom.weatherButtons = Array.from(document.querySelectorAll("[data-weather]"));
@@ -108,6 +113,45 @@
       dom.appSubtitle.textContent = window.TRIP_META.subtitle || "";
       dom.globalWarning.textContent = window.TRIP_META.warning || "";
     }
+  }
+
+  function renderTravelLogistics() {
+    if (!dom.travelStrip) return;
+
+    const logistics = window.TRAVEL_LOGISTICS;
+    const hotel = logistics?.hotel || window.HOTEL_REFERENCE || null;
+    const flights = Array.isArray(logistics?.flights) ? logistics.flights : [];
+
+    if (!hotel && !flights.length) {
+      dom.travelStrip.hidden = true;
+      return;
+    }
+
+    const flightCards = flights
+      .map((flight) => {
+        return `
+          <article class="travel-card">
+            <h3>${escapeHtml(flight.ruta || "Vuelo")}</h3>
+            <p><strong>${escapeHtml(flight.numero || "")}</strong></p>
+            <p>Salida: ${escapeHtml(flight.salida || "-")}</p>
+            <p>Llegada: ${escapeHtml(flight.llegada || "-")}</p>
+            ${flight.equipaje_apertura ? `<p>Equipaje: ${escapeHtml(flight.equipaje_apertura)} - ${escapeHtml(flight.equipaje_cierre || "")}</p>` : ""}
+            ${flight.nota ? `<p>${escapeHtml(flight.nota)}</p>` : ""}
+          </article>
+        `;
+      })
+      .join("");
+
+    dom.travelStrip.innerHTML = `
+      <article class="travel-card travel-card-hotel">
+        <h3>Hotel base (referencia fija en mapa)</h3>
+        <p><strong>${escapeHtml(hotel?.nombre || "")}</strong></p>
+        <p>${escapeHtml(hotel?.direccion || "")}</p>
+        <p>Check-in ${escapeHtml(hotel?.checkin || "-")} · Check-out ${escapeHtml(hotel?.checkout || "-")}</p>
+        <p>Hotel: ${escapeHtml(hotel?.telefono_hotel || "-")} · Reservas: ${escapeHtml(hotel?.telefono_reservas || "-")}</p>
+      </article>
+      ${flightCards}
+    `;
   }
 
   function bindGlobalEvents() {
@@ -482,8 +526,33 @@
     }).addTo(map);
 
     markerLayer = L.layerGroup().addTo(map);
+    fixedMarkerLayer = L.layerGroup().addTo(map);
+    renderHotelReferenceMarker();
     mapInitialized = true;
     refreshMap();
+  }
+
+  function renderHotelReferenceMarker() {
+    if (!map || !fixedMarkerLayer) return;
+
+    const hotel = window.HOTEL_REFERENCE || poiById.get(HOTEL_ID);
+    if (!hotel || !isFiniteNumber(hotel.lat) || !isFiniteNumber(hotel.lng)) return;
+
+    fixedMarkerLayer.clearLayers();
+
+    const icon = L.divIcon({
+      className: "hotel-ref-icon",
+      html: '<span>HOTEL</span>',
+      iconSize: [58, 24],
+      iconAnchor: [29, 12]
+    });
+
+    hotelMarker = L.marker([hotel.lat, hotel.lng], { icon });
+    hotelMarker.bindPopup(
+      `<div><strong>${escapeHtml(hotel.nombre || "Hotel")}</strong><br /><small>${escapeHtml(hotel.direccion || "")}</small><br /><small>Check-in ${escapeHtml(hotel.checkin || "-")} · Check-out ${escapeHtml(hotel.checkout || "-")}</small></div>`,
+      { maxWidth: 280 }
+    );
+    hotelMarker.addTo(fixedMarkerLayer);
   }
 
   function refreshMap() {
@@ -604,8 +673,12 @@
   function renderMapMarkers(pois) {
     markerLayer.clearLayers();
     markersByPoiId = new Map();
+    if (hotelMarker) {
+      markersByPoiId.set(HOTEL_ID, hotelMarker);
+    }
 
     pois.forEach((poi) => {
+      if (poi.id === HOTEL_ID) return;
       if (!isFiniteNumber(poi.lat) || !isFiniteNumber(poi.lng)) return;
 
       const marker = L.circleMarker([poi.lat, poi.lng], {
@@ -676,7 +749,7 @@
   function focusPoiOnMap(poiId, openPopup) {
     if (!poiId || !mapInitialized) return;
 
-    const marker = markersByPoiId.get(poiId);
+    const marker = markersByPoiId.get(poiId) || (poiId === HOTEL_ID ? hotelMarker : null);
     if (!marker) {
       showToast("Ese lugar esta oculto por filtros actuales.");
       return;
@@ -1165,6 +1238,7 @@
 
   function getCategoryIcon(category) {
     const iconMap = {
+      hotel: "HT",
       museo: "MU",
       paseo: "PS",
       mirador: "MR",
@@ -1183,6 +1257,7 @@
 
   function categoryColor(category) {
     const colorMap = {
+      hotel: "#ff4b3e",
       museo: "#4ea5ff",
       paseo: "#7be495",
       mirador: "#ffb04a",
