@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Plan interactivo de 3 dias para visitar Amsterdam con 4 familias." />
+    <meta name="theme-color" content="#0a5d5d" />
+    <title>Que ver en Amsterdam en 3 dias</title>
+
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+    <header class="topbar">
+      <div class="brand-block">
+        <p class="eyebrow">Travel Planner familiar</p>
+        <h1 id="app-title">Que ver en Amsterdam en 3 dias</h1>
+        <p id="app-subtitle"></p>
+      </div>
+
+      <div class="top-controls" aria-label="Controles principales">
+        <div class="control-group" role="group" aria-label="Seleccion de dia">
+          <span class="control-label">Dia</span>
+          <div id="day-switcher" class="switcher"></div>
+        </div>
+
+        <div class="control-group" role="group" aria-label="Modo de clima">
+          <span class="control-label">Modo</span>
+          <div class="switcher" id="weather-switcher">
+            <button class="chip" data-weather="sun" type="button">Sol (Plan A)</button>
+            <button class="chip" data-weather="rain" type="button">Lluvia (Plan B)</button>
+          </div>
+        </div>
+
+        <div class="control-group stats">
+          <span class="control-label">Progreso</span>
+          <strong id="done-counter">0 hechas</strong>
+          <span id="favorite-counter">0 favoritas</span>
+        </div>
+
+        <button id="dark-mode-toggle" class="chip ghost" type="button" aria-pressed="false">
+          Dark mode
+        </button>
+      </div>
+    </header>
+
+    <p class="global-warning" role="note" id="global-warning"></p>
+
+    <nav class="tab-nav" role="tablist" aria-label="Secciones principales">
+      <button role="tab" aria-selected="true" aria-controls="tab-itinerary" id="btn-itinerary" data-tab="itinerary">
+        Itinerario (3 dias)
+      </button>
+      <button role="tab" aria-selected="false" aria-controls="tab-map" id="btn-map" data-tab="map">
+        Mapa
+      </button>
+      <button role="tab" aria-selected="false" aria-controls="tab-checklist" id="btn-checklist" data-tab="checklist">
+        Checklist & Tips
+      </button>
+      <button role="tab" aria-selected="false" aria-controls="tab-options" id="btn-options" data-tab="options">
+        Opciones
+      </button>
+    </nav>
+
+    <main id="main-content" class="main-content">
+      <section id="tab-itinerary" class="tab-panel active" role="tabpanel" aria-labelledby="btn-itinerary">
+        <div class="toolbar card">
+          <label for="departure-time"><strong>Hora de salida (dia actual):</strong></label>
+          <input id="departure-time" type="time" aria-label="Hora de salida del dia" />
+
+          <button id="btn-export" class="chip" type="button">Exportar plan (JSON)</button>
+          <label class="chip file-chip" for="import-file">Importar plan (JSON)</label>
+          <input id="import-file" type="file" accept="application/json" />
+          <button id="btn-print" class="chip" type="button">Imprimir</button>
+        </div>
+
+        <div id="itinerary-day-view" class="itinerary-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="tab-map" class="tab-panel" role="tabpanel" aria-labelledby="btn-map" hidden>
+        <div class="map-layout">
+          <aside class="map-sidebar card" aria-label="Lista y filtros de lugares">
+            <div class="search-row">
+              <label for="search-input">Busqueda rapida</label>
+              <input id="search-input" type="search" placeholder="Nombre, etiqueta o barrio..." />
+            </div>
+
+            <div class="filter-grid" aria-label="Filtros">
+              <label>
+                Dia
+                <select id="filter-day">
+                  <option value="all">Todos</option>
+                  <option value="day1">Dia 1</option>
+                  <option value="day2">Dia 2</option>
+                  <option value="day3">Dia 3</option>
+                </select>
+              </label>
+
+              <label>
+                Categoria
+                <select id="filter-category">
+                  <option value="all">Todas</option>
+                </select>
+              </label>
+
+              <label>
+                Espacio
+                <select id="filter-indoor">
+                  <option value="all">Indoor + Outdoor</option>
+                  <option value="indoor">Solo indoor</option>
+                  <option value="outdoor">Solo outdoor</option>
+                </select>
+              </label>
+
+              <label>
+                Presupuesto
+                <select id="filter-budget">
+                  <option value="all">Todos</option>
+                  <option value="€">€</option>
+                  <option value="€€">€€</option>
+                  <option value="€€€">€€€</option>
+                </select>
+              </label>
+
+              <label class="checkbox-inline">
+                <input type="checkbox" id="filter-rain" />
+                Apto lluvia
+              </label>
+
+              <label class="checkbox-inline">
+                <input type="checkbox" id="filter-no-booking" />
+                Sin reserva
+              </label>
+
+              <label class="checkbox-inline">
+                <input type="checkbox" id="filter-favorites" />
+                Solo favoritas
+              </label>
+            </div>
+
+            <div class="map-sidebar-actions">
+              <button id="btn-near-me" class="chip" type="button">Cerca de mi</button>
+              <button id="btn-clear-near" class="chip ghost" type="button">Quitar distancia</button>
+              <small id="distance-hint"></small>
+            </div>
+
+            <ul id="poi-list" class="poi-list" aria-label="Resultados de lugares"></ul>
+          </aside>
+
+          <div class="map-panel card">
+            <div id="map" aria-label="Mapa interactivo"></div>
+            <p class="map-note">
+              Click en un item para enfocar el marcador. Click en marcador para resaltar el item.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-checklist" class="tab-panel" role="tabpanel" aria-labelledby="btn-checklist" hidden>
+        <div class="tips-layout">
+          <article class="card tip-card">
+            <h2>Tips de logistica (Amsterdam)</h2>
+            <ul>
+              <li>Tranvia/metro: usa OVpay o tarjetas recargables para moverte rapido con grupo grande.</li>
+              <li>Ferry gratis a Noord: sale desde detras de Centraal y es perfecto para ir a A'DAM, Eye y STRAAT.</li>
+              <li>Caminar y bici: ideal para distancias cortas, pero mantener siempre al grupo fuera del carril bici.</li>
+              <li>Puntos de encuentro: define uno por manana, tarde y noche para evitar dispersion.</li>
+              <li>Buffers: suma 15-20 min entre paradas (4 familias tardan mas en reagruparse).</li>
+              <li>Reservas: museos top suelen agotarse; cierra tickets antes de viajar.</li>
+              <li>Comidas: prioriza food halls o mercados para satisfacer gustos distintos rapido.</li>
+            </ul>
+          </article>
+
+          <article class="card tip-card">
+            <h2>Kit lluvia + plan indoor</h2>
+            <ul>
+              <li>Chubasqueros ligeros, funda impermeable y calcetin extra por persona.</li>
+              <li>Ten siempre un Plan B indoor por franja (museo, experiencia inmersiva o food hall).</li>
+              <li>Cuando llueva fuerte, agrupa actividades por zona para reducir traslados.</li>
+              <li>Usa el toggle Sol/Lluvia para cambiar todo el itinerario en segundos.</li>
+            </ul>
+          </article>
+
+          <article class="card checklist-card">
+            <h2>Checklist compartible</h2>
+            <p>Todo se guarda automaticamente en este navegador.</p>
+            <div id="checklist-groups"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="tab-options" class="tab-panel" role="tabpanel" aria-labelledby="btn-options" hidden>
+        <div class="options-grid">
+          <article class="card">
+            <h2>Preferencias</h2>
+            <button id="btn-dark-mode-alt" class="chip" type="button">Alternar dark mode</button>
+            <button id="btn-reset-progress" class="chip danger" type="button">Resetear progreso</button>
+          </article>
+
+          <article class="card">
+            <h2>Plan compartible</h2>
+            <p>Exporta/importa JSON para sincronizar el plan entre familias.</p>
+            <button id="btn-export-alt" class="chip" type="button">Exportar JSON</button>
+            <label class="chip file-chip" for="import-file-alt">Importar JSON</label>
+            <input id="import-file-alt" type="file" accept="application/json" />
+          </article>
+
+          <article class="card">
+            <h2>PWA y soporte offline</h2>
+            <p id="sw-status">Comprobando Service Worker...</p>
+            <small>
+              Nota: el mapa y sus tiles requieren internet para cargar por primera vez.
+            </small>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <noscript>
+      <p>Esta web necesita JavaScript para mostrar mapa, filtros y persistencia local.</p>
+    </noscript>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

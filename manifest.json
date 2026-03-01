@@ -1,0 +1,24 @@
+{
+  "name": "Amsterdam 3 dias - Planner familiar",
+  "short_name": "AMS 3 dias",
+  "description": "Planificador interactivo de 3 dias en Amsterdam para familias con adolescentes.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f4f8f6",
+  "theme_color": "#0a5d5d",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
