@@ -43,6 +43,7 @@
     cacheDom();
     injectTripMeta();
     renderTravelLogistics();
+    populateDayFilter();
     populateCategoryFilter();
     bindGlobalEvents();
     renderDaySwitcher();
@@ -587,14 +588,28 @@
 
     fixedMarkerLayer.clearLayers();
 
+    if (!map.getPane("hotelPane")) {
+      map.createPane("hotelPane");
+      map.getPane("hotelPane").style.zIndex = "680";
+    }
+
     const icon = L.divIcon({
       className: "hotel-ref-icon",
-      html: '<span>HOTEL</span>',
-      iconSize: [58, 24],
-      iconAnchor: [29, 12]
+      html: '<span>🏨 HOTEL BASE</span>',
+      iconSize: [104, 30],
+      iconAnchor: [52, 15]
     });
 
-    hotelMarker = L.marker([hotel.lat, hotel.lng], { icon });
+    L.circleMarker([hotel.lat, hotel.lng], {
+      pane: "hotelPane",
+      radius: 14,
+      color: "#d8fbff",
+      weight: 3,
+      fillColor: "#00cfff",
+      fillOpacity: 0.38
+    }).addTo(fixedMarkerLayer);
+
+    hotelMarker = L.marker([hotel.lat, hotel.lng], { icon, pane: "hotelPane" });
     hotelMarker.bindPopup(
       `<div><strong>${escapeHtml(hotel.nombre || "Hotel")}</strong><br /><small>${escapeHtml(hotel.direccion || "")}</small><br /><small>Check-in ${escapeHtml(hotel.checkin || "-")} · Check-out ${escapeHtml(hotel.checkout || "-")}</small></div>`,
       { maxWidth: 280 }
@@ -1211,6 +1226,21 @@
       option.textContent = category;
       dom.filterCategory.appendChild(option);
     });
+  }
+
+  function populateDayFilter() {
+    if (!dom.filterDay) return;
+    const current = appState.filters.day || "all";
+    dom.filterDay.innerHTML = '<option value="all">Todos</option>';
+
+    DAYS.forEach((dayKey) => {
+      const option = document.createElement("option");
+      option.value = dayKey;
+      option.textContent = window.DAY_LABELS?.[dayKey] || dayKey;
+      dom.filterDay.appendChild(option);
+    });
+
+    dom.filterDay.value = DAYS.includes(current) || current === "all" ? current : "all";
   }
 
   function showToast(message, timeoutMs = 2200) {

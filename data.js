@@ -8,9 +8,9 @@ window.DAY_ORDER = ["day1", "day2", "day3"];
 window.SEGMENT_ORDER = ["morning", "afternoon", "night"];
 
 window.DAY_LABELS = {
-  day1: "Vie 10 Jul (llegada)",
-  day2: "Sab 11 Jul",
-  day3: "Dom 12 Jul"
+  day1: "10 de julio",
+  day2: "11 de julio",
+  day3: "12 de julio"
 };
 
 window.SEGMENT_LABELS = {
@@ -56,7 +56,7 @@ window.TRAVEL_LOGISTICS = {
 };
 
 window.DEPARTURE_DAY_PLAN = {
-  label: "Lun 13 Jul (salida)",
+  label: "13 de julio (salida)",
   subtitle: "Mini-vista operativa no editable",
   items: [
     {
