@@ -1,16 +1,17 @@
 window.TRIP_META = {
-  title: "Qué ver en Ámsterdam en 3 días",
-  subtitle: "Viaje familiar: llegada vie 10 jul 2026, regreso lun 13 jul 2026 (familias con niños/as)",
+  title: "Qué ver en Ámsterdam (10-13 julio 2026)",
+  subtitle: "Viaje familiar con niños/as: llegada vie 10 jul, regreso lun 13 jul",
   warning: "Horarios y entradas cambian; verifica siempre en la web oficial."
 };
 
-window.DAY_ORDER = ["day1", "day2", "day3"];
+window.DAY_ORDER = ["day1", "day2", "day3", "day4"];
 window.SEGMENT_ORDER = ["morning", "afternoon", "night"];
 
 window.DAY_LABELS = {
   day1: "10 de julio",
   day2: "11 de julio",
-  day3: "12 de julio"
+  day3: "12 de julio",
+  day4: "13 de julio"
 };
 
 window.SEGMENT_LABELS = {
@@ -822,6 +823,20 @@ window.DEFAULT_ITINERARY = {
     night: [
       { entryId: "d3n1", planA: "canal-cruise-central", planB: "eye-filmmuseum" },
       { entryId: "d3n2", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" }
+    ]
+  },
+  day4: {
+    morning: [
+      { entryId: "d4m1", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" },
+      { entryId: "d4m2", planA: "vondelpark", planB: "rijksmuseum" }
+    ],
+    afternoon: [
+      { entryId: "d4a1", planA: "foodhallen", planB: "moco-museum" },
+      { entryId: "d4a2", planA: "museumplein", planB: "tropenmuseum" },
+      { entryId: "d4a3", planA: "hotel-best-western-amsterdam", planB: "hotel-best-western-amsterdam" }
+    ],
+    night: [
+      { entryId: "d4n1", planA: "schiphol-airport", planB: "schiphol-airport" }
     ]
   }
 };

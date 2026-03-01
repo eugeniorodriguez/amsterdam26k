@@ -14,7 +14,7 @@
     search: ""
   };
 
-  const DAYS = window.DAY_ORDER || ["day1", "day2", "day3"];
+  const DAYS = window.DAY_ORDER || ["day1", "day2", "day3", "day4"];
   const SEGMENTS = window.SEGMENT_ORDER || ["morning", "afternoon", "night"];
   const HOTEL_ID = window.HOTEL_REFERENCE?.id || "hotel-best-western-amsterdam";
   const poiById = new Map((window.POIS || []).map((poi) => [poi.id, poi]));
@@ -614,6 +614,12 @@
       `<div><strong>${escapeHtml(hotel.nombre || "Hotel")}</strong><br /><small>${escapeHtml(hotel.direccion || "")}</small><br /><small>Check-in ${escapeHtml(hotel.checkin || "-")} · Check-out ${escapeHtml(hotel.checkout || "-")}</small></div>`,
       { maxWidth: 280 }
     );
+    hotelMarker.bindTooltip("🏨 HOTEL", {
+      permanent: true,
+      direction: "top",
+      className: "hotel-ref-tooltip",
+      offset: [0, -16]
+    });
     hotelMarker.addTo(fixedMarkerLayer);
   }
 
@@ -789,6 +795,16 @@
     }
 
     const coords = [];
+    const hotel = window.HOTEL_REFERENCE || poiById.get(HOTEL_ID);
+    const hotelCoord =
+      hotel && isFiniteNumber(hotel.lat) && isFiniteNumber(hotel.lng)
+        ? [Number(hotel.lat), Number(hotel.lng)]
+        : null;
+
+    if (hotelCoord) {
+      coords.push(hotelCoord);
+    }
+
     const dayData = appState.itinerary?.[appState.selectedDay];
     SEGMENTS.forEach((segment) => {
       (dayData[segment] || []).forEach((entry) => {
@@ -797,6 +813,10 @@
         coords.push([poi.lat, poi.lng]);
       });
     });
+
+    if (hotelCoord) {
+      coords.push(hotelCoord);
+    }
 
     if (coords.length < 2) return;
 
@@ -1105,7 +1125,8 @@
       departureTimes: {
         day1: "09:00",
         day2: "09:30",
-        day3: "10:00"
+        day3: "10:00",
+        day4: "08:30"
       },
       itinerary: deepClone(window.DEFAULT_ITINERARY || {}),
       filters: { ...DEFAULT_FILTERS },
