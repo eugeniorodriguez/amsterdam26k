@@ -325,6 +325,80 @@ label.file-chip {
   gap: 12px;
 }
 
+.departure-mini {
+  margin-top: 12px;
+}
+
+.departure-card {
+  padding: 12px;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 34%),
+    var(--surface);
+}
+
+.departure-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.departure-head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.departure-head p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.departure-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.departure-item {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  padding: 8px;
+}
+
+.departure-time {
+  color: color-mix(in srgb, var(--brand) 82%, #fff 18%);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.departure-content h4 {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.departure-content p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.departure-foot {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .segment-column {
   padding: 12px;
   display: grid;
@@ -651,14 +725,14 @@ label.file-chip {
   width: 58px;
   height: 24px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #ff4b3e, #ff2f1e);
+  background: linear-gradient(135deg, #00d4ff, #0098ff);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.65);
   font-size: 0.68rem;
   letter-spacing: 0.05em;
   font-family: "Space Grotesk", sans-serif;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(255, 55, 41, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 145, 255, 0.45);
 }
 
 .map-note {
@@ -830,6 +904,11 @@ label.file-chip {
 
   .tab-nav button {
     font-size: 0.82rem;
+  }
+
+  .departure-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 
   #map {

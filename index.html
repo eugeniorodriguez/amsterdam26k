@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Plan interactivo de 3 dias para visitar Amsterdam con 4 familias." />
+    <meta name="description" content="Plan interactivo de 3 días para visitar Ámsterdam con 4 familias." />
     <meta name="theme-color" content="#0a5d5d" />
-    <title>Que ver en Amsterdam en 3 dias</title>
+    <title>Qué ver en Ámsterdam en 3 días</title>
 
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg" />
@@ -31,13 +31,13 @@
     <header class="topbar">
       <div class="brand-block">
         <p class="eyebrow">Travel Planner familiar</p>
-        <h1 id="app-title">Que ver en Amsterdam en 3 dias</h1>
+        <h1 id="app-title">Qué ver en Ámsterdam en 3 días</h1>
         <p id="app-subtitle"></p>
       </div>
 
       <div class="top-controls" aria-label="Controles principales">
-        <div class="control-group" role="group" aria-label="Seleccion de dia">
-          <span class="control-label">Dia</span>
+        <div class="control-group" role="group" aria-label="Selección de día">
+          <span class="control-label">Día</span>
           <div id="day-switcher" class="switcher"></div>
         </div>
 
@@ -66,7 +66,7 @@
 
     <nav class="tab-nav" role="tablist" aria-label="Secciones principales">
       <button role="tab" aria-selected="true" aria-controls="tab-itinerary" id="btn-itinerary" data-tab="itinerary">
-        Itinerario (3 dias)
+        Itinerario (3 días)
       </button>
       <button role="tab" aria-selected="false" aria-controls="tab-map" id="btn-map" data-tab="map">
         Mapa
@@ -82,8 +82,8 @@
     <main id="main-content" class="main-content">
       <section id="tab-itinerary" class="tab-panel active" role="tabpanel" aria-labelledby="btn-itinerary">
         <div class="toolbar card">
-          <label for="departure-time"><strong>Hora de salida (dia actual):</strong></label>
-          <input id="departure-time" type="time" aria-label="Hora de salida del dia" />
+          <label for="departure-time"><strong>Hora de salida (día actual):</strong></label>
+          <input id="departure-time" type="time" aria-label="Hora de salida del día" />
 
           <button id="btn-export" class="chip" type="button">Exportar plan (JSON)</button>
           <label class="chip file-chip" for="import-file">Importar plan (JSON)</label>
@@ -92,24 +92,25 @@
         </div>
 
         <div id="itinerary-day-view" class="itinerary-grid" aria-live="polite"></div>
+        <div id="departure-mini" class="departure-mini" aria-live="polite"></div>
       </section>
 
       <section id="tab-map" class="tab-panel" role="tabpanel" aria-labelledby="btn-map" hidden>
         <div class="map-layout">
           <aside class="map-sidebar card" aria-label="Lista y filtros de lugares">
             <div class="search-row">
-              <label for="search-input">Busqueda rapida</label>
+              <label for="search-input">Búsqueda rápida</label>
               <input id="search-input" type="search" placeholder="Nombre, etiqueta o barrio..." />
             </div>
 
             <div class="filter-grid" aria-label="Filtros">
               <label>
-                Dia
+                Día
                 <select id="filter-day">
                   <option value="all">Todos</option>
-                  <option value="day1">Dia 1</option>
-                  <option value="day2">Dia 2</option>
-                  <option value="day3">Dia 3</option>
+                  <option value="day1">Día 1</option>
+                  <option value="day2">Día 2</option>
+                  <option value="day3">Día 3</option>
                 </select>
               </label>
 
@@ -141,12 +142,12 @@
 
               <label class="checkbox-inline">
                 <input type="checkbox" id="filter-rain" />
-                Apto lluvia
+                Apto para lluvia
               </label>
 
               <label class="checkbox-inline">
                 <input type="checkbox" id="filter-no-booking" />
-                Sin reserva
+                Sin reserva previa
               </label>
 
               <label class="checkbox-inline">
@@ -156,7 +157,7 @@
             </div>
 
             <div class="map-sidebar-actions">
-              <button id="btn-near-me" class="chip" type="button">Cerca de mi</button>
+              <button id="btn-near-me" class="chip" type="button">Cerca de mí</button>
               <button id="btn-clear-near" class="chip ghost" type="button">Quitar distancia</button>
               <small id="distance-hint"></small>
             </div>
@@ -176,22 +177,22 @@
       <section id="tab-checklist" class="tab-panel" role="tabpanel" aria-labelledby="btn-checklist" hidden>
         <div class="tips-layout">
           <article class="card tip-card">
-            <h2>Tips de logistica (Amsterdam)</h2>
+            <h2>Tips de logística (Ámsterdam)</h2>
             <ul>
-              <li>Tranvia/metro: usa OVpay o tarjetas recargables para moverte rapido con grupo grande.</li>
-              <li>Ferry gratis a Noord: sale desde detras de Centraal y es perfecto para ir a A'DAM, Eye y STRAAT.</li>
+              <li>Tranvía/metro: usa OVpay o tarjetas recargables para moverte rápido con grupo grande.</li>
+              <li>Ferry gratis a Noord: sale desde detrás de Centraal y es perfecto para ir a A'DAM, Eye y STRAAT.</li>
               <li>Caminar y bici: ideal para distancias cortas, pero mantener siempre al grupo fuera del carril bici.</li>
-              <li>Puntos de encuentro: define uno por manana, tarde y noche para evitar dispersion.</li>
-              <li>Buffers: suma 15-20 min entre paradas (4 familias tardan mas en reagruparse).</li>
+              <li>Puntos de encuentro: define uno por mañana, tarde y noche para evitar dispersión.</li>
+              <li>Buffers: suma 15-20 min entre paradas (4 familias tardan más en reagruparse).</li>
               <li>Reservas: museos top suelen agotarse; cierra tickets antes de viajar.</li>
-              <li>Comidas: prioriza food halls o mercados para satisfacer gustos distintos rapido.</li>
+              <li>Comidas: prioriza food halls o mercados para satisfacer gustos distintos rápido.</li>
             </ul>
           </article>
 
           <article class="card tip-card">
             <h2>Kit lluvia + plan indoor</h2>
             <ul>
-              <li>Chubasqueros ligeros, funda impermeable y calcetin extra por persona.</li>
+              <li>Chubasqueros ligeros, funda impermeable y calcetín extra por persona.</li>
               <li>Ten siempre un Plan B indoor por franja (museo, experiencia inmersiva o food hall).</li>
               <li>Cuando llueva fuerte, agrupa actividades por zona para reducir traslados.</li>
               <li>Usa el toggle Sol/Lluvia para cambiar todo el itinerario en segundos.</li>
@@ -200,7 +201,7 @@
 
           <article class="card checklist-card">
             <h2>Checklist compartible</h2>
-            <p>Todo se guarda automaticamente en este navegador.</p>
+            <p>Todo se guarda automáticamente en este navegador.</p>
             <div id="checklist-groups"></div>
           </article>
         </div>

@@ -80,6 +80,7 @@
 
     dom.departureTime = document.getElementById("departure-time");
     dom.itineraryDayView = document.getElementById("itinerary-day-view");
+    dom.departureMini = document.getElementById("departure-mini");
 
     dom.btnExport = document.getElementById("btn-export");
     dom.btnExportAlt = document.getElementById("btn-export-alt");
@@ -239,7 +240,7 @@
     dom.checklistGroups.addEventListener("change", onChecklistChange);
 
     dom.btnResetProgress.addEventListener("click", () => {
-      const ok = window.confirm("Esto reinicia progreso, favoritos y filtros. Continuar?");
+      const ok = window.confirm("Esto reinicia progreso, favoritos y filtros. ¿Continuar?");
       if (!ok) return;
       const keepTheme = appState.darkMode;
       appState = getDefaultState();
@@ -370,8 +371,8 @@
               <span class="badge">${escapeHtml(poi.categoria)}</span>
               <span class="badge">${poi.coste_nivel}</span>
               <span class="badge">${Number(poi.duracion_min) || 0} min</span>
-              ${poi.reserva_requerida ? '<span class="badge reserve">Reserva</span>' : '<span class="badge">Sin reserva</span>'}
-              ${poi.apto_lluvia ? '<span class="badge">Apto lluvia</span>' : ""}
+              ${poi.reserva_requerida ? '<span class="badge reserve">Reserva</span>' : '<span class="badge">Sin reserva previa</span>'}
+              ${poi.apto_lluvia ? '<span class="badge">Apto para lluvia</span>' : ""}
             </div>
             <div class="stop-actions">
               <button class="icon-btn done" type="button" data-action="toggle-done" data-poi-id="${poi.id}" data-active="${isDone}">
@@ -395,7 +396,53 @@
     });
 
     initSortables();
+    renderDepartureMini();
     updateCounters();
+  }
+
+  function renderDepartureMini() {
+    if (!dom.departureMini) return;
+    const departurePlan = window.DEPARTURE_DAY_PLAN;
+    if (!departurePlan) {
+      dom.departureMini.hidden = true;
+      return;
+    }
+
+    const inboundFlight = (window.TRAVEL_LOGISTICS?.flights || []).find((flight) => flight.numero === "HV6227");
+    const hotel = window.HOTEL_REFERENCE;
+
+    const rows = (departurePlan.items || [])
+      .map((item) => {
+        return `
+          <li class="departure-item">
+            <span class="departure-time">${escapeHtml(item.hora || "-")}</span>
+            <div class="departure-content">
+              <h4>${escapeHtml(item.titulo || "")}</h4>
+              <p>${escapeHtml(item.detalle || "")}</p>
+            </div>
+          </li>
+        `;
+      })
+      .join("");
+
+    dom.departureMini.hidden = false;
+    dom.departureMini.innerHTML = `
+      <article class="departure-card card">
+        <header class="departure-head">
+          <div>
+            <h3>${escapeHtml(departurePlan.label || "Día de salida")}</h3>
+            <p>${escapeHtml(departurePlan.subtitle || "")}</p>
+          </div>
+          <span class="badge">No editable</span>
+        </header>
+        <ul class="departure-list">${rows}</ul>
+        <footer class="departure-foot">
+          <span class="badge">Hotel base: ${escapeHtml(hotel?.nombre || "Best Western Amsterdam")}</span>
+          <span class="badge">Check-out: ${escapeHtml(hotel?.checkout || "11:00 CEST")}</span>
+          <span class="badge">Vuelo: ${escapeHtml(inboundFlight?.numero || "HV6227")} · ${escapeHtml(inboundFlight?.salida || "20:15")}</span>
+        </footer>
+      </article>
+    `;
   }
 
   function initSortables() {
@@ -478,7 +525,7 @@
       renderItinerary();
       refreshMap();
       saveState();
-      showToast(favoriteSet.has(poiId) ? "Anadida a favoritas" : "Quitada de favoritas");
+      showToast(favoriteSet.has(poiId) ? "Añadida a favoritas" : "Quitada de favoritas");
       return;
     }
 
@@ -627,7 +674,7 @@
     if (!pois.length) {
       const empty = document.createElement("li");
       empty.className = "poi-item";
-      empty.innerHTML = "<h3>Sin resultados</h3><p>Prueba quitar filtros o cambiar el texto de busqueda.</p>";
+      empty.innerHTML = "<h3>Sin resultados</h3><p>Prueba quitar filtros o cambiar el texto de búsqueda.</p>";
       dom.poiList.appendChild(empty);
       return;
     }
@@ -657,7 +704,7 @@
           <span class="badge">${escapeHtml(poi.categoria)}</span>
           <span class="badge">${poi.indoor ? "Indoor" : "Outdoor"}</span>
           <span class="badge">${poi.coste_nivel}</span>
-          ${poi.reserva_requerida ? '<span class="badge reserve">Reserva</span>' : '<span class="badge">Sin reserva</span>'}
+          ${poi.reserva_requerida ? '<span class="badge reserve">Reserva</span>' : '<span class="badge">Sin reserva previa</span>'}
           ${distanceBadge}
         </div>
         <p>${escapeHtml(poi.direccion)}</p>
@@ -793,7 +840,7 @@
 
   function useNearMe() {
     if (!navigator.geolocation) {
-      showToast("Tu navegador no soporta geolocalizacion.");
+      showToast("Tu navegador no soporta geolocalización.");
       return;
     }
 
@@ -811,7 +858,7 @@
           fillColor: "#e38b2f",
           fillOpacity: 0.9,
           weight: 2
-        }).bindPopup("Tu ubicacion aproximada");
+        }).bindPopup("Tu ubicación aproximada");
 
         userMarker.addTo(map);
         map.flyTo([appState.nearMe.lat, appState.nearMe.lng], 13, { animate: true, duration: 0.9 });
@@ -821,7 +868,7 @@
         showToast("Ordenado por distancia (aprox).", 2800);
       },
       () => {
-        showToast("No se pudo obtener tu ubicacion.");
+        showToast("No se pudo obtener tu ubicación.");
       },
       {
         enableHighAccuracy: true,
@@ -1257,7 +1304,7 @@
 
   function categoryColor(category) {
     const colorMap = {
-      hotel: "#ff4b3e",
+      hotel: "#00b7ff",
       museo: "#4ea5ff",
       paseo: "#7be495",
       mirador: "#ffb04a",
