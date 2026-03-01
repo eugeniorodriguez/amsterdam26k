@@ -258,7 +258,8 @@
     dom.searchInput.value = appState.filters.search || "";
 
     dom.darkModeToggle.setAttribute("aria-pressed", String(Boolean(appState.darkMode)));
-    dom.darkModeToggle.textContent = appState.darkMode ? "Modo claro" : "Dark mode";
+    dom.darkModeToggle.textContent = appState.darkMode ? "Tema claro" : "Tema oscuro";
+    dom.darkModeToggleAlt.textContent = appState.darkMode ? "Cambiar a claro" : "Cambiar a oscuro";
   }
 
   function renderItinerary() {
@@ -306,12 +307,18 @@
         const isFav = favoriteSet.has(poi.id);
         const startTime = timeline.get(entry.entryId);
         const isHighlighted = appState.lastHighlightedPoi === poi.id;
+        const catClass = categoryClass(poi.categoria);
+        const catIcon = getCategoryIcon(poi.categoria);
 
         li.innerHTML = `
           <article class="stop-card ${isHighlighted ? "highlighted" : ""}" data-poi-id="${poi.id}">
-            <div class="stop-main">
-              <h3 class="stop-title">${escapeHtml(poi.nombre)}</h3>
-              <span class="stop-time">${startTime ? `Inicio aprox ${startTime}` : ""}</span>
+            <div class="stop-head">
+              <div class="stop-thumb ${catClass}" aria-hidden="true">${catIcon}</div>
+              <div class="stop-main">
+                <h3 class="stop-title">${escapeHtml(poi.nombre)}</h3>
+                <p class="stop-zone">${escapeHtml(poi.barrio)} · ${escapeHtml(poi.direccion)}</p>
+              </div>
+              <span class="stop-time">${startTime ? `Inicio ${startTime}` : ""}</span>
             </div>
             <p class="segment-sub">${escapeHtml(poi.descripcion_corta)}</p>
             <div class="stop-meta">
@@ -566,9 +573,17 @@
 
       const km = distanceByPoi.get(poi.id);
       const distanceBadge = typeof km === "number" ? `<span class="badge">${km.toFixed(1)} km</span>` : "";
+      const catClass = categoryClass(poi.categoria);
+      const catIcon = getCategoryIcon(poi.categoria);
 
       li.innerHTML = `
-        <h3>${escapeHtml(poi.nombre)}</h3>
+        <div class="poi-head">
+          <div class="poi-thumb ${catClass}" aria-hidden="true">${catIcon}</div>
+          <div>
+            <h3>${escapeHtml(poi.nombre)}</h3>
+            <p class="poi-zone">${escapeHtml(poi.barrio)}</p>
+          </div>
+        </div>
         <div class="meta-line">
           <span class="badge">${escapeHtml(poi.categoria)}</span>
           <span class="badge">${poi.indoor ? "Indoor" : "Outdoor"}</span>
@@ -576,7 +591,7 @@
           ${poi.reserva_requerida ? '<span class="badge reserve">Reserva</span>' : '<span class="badge">Sin reserva</span>'}
           ${distanceBadge}
         </div>
-        <p><strong>${escapeHtml(poi.barrio)}</strong> - ${escapeHtml(poi.direccion)}</p>
+        <p>${escapeHtml(poi.direccion)}</p>
         <p>${escapeHtml(poi.descripcion_corta)}</p>
       `;
 
@@ -593,7 +608,13 @@
     pois.forEach((poi) => {
       if (!isFiniteNumber(poi.lat) || !isFiniteNumber(poi.lng)) return;
 
-      const marker = L.marker([poi.lat, poi.lng]);
+      const marker = L.circleMarker([poi.lat, poi.lng], {
+        radius: 8,
+        color: "#0c1020",
+        weight: 2,
+        fillColor: categoryColor(poi.categoria),
+        fillOpacity: 0.94
+      });
       marker.bindPopup(buildPopupHtml(poi), { maxWidth: 280 });
       marker.on("click", () => {
         appState.lastHighlightedPoi = poi.id;
@@ -645,10 +666,10 @@
     if (coords.length < 2) return;
 
     routeLine = L.polyline(coords, {
-      color: "#0a5d5d",
-      weight: 4,
-      opacity: 0.85,
-      dashArray: "7 6"
+      color: "#ff4b3e",
+      weight: 4.5,
+      opacity: 0.88,
+      dashArray: "8 6"
     }).addTo(map);
   }
 
@@ -822,6 +843,10 @@
 
   function applyTheme(isDark) {
     dom.body.classList.toggle("theme-dark", Boolean(isDark));
+    const mapElement = document.getElementById("map");
+    if (mapElement) {
+      mapElement.classList.toggle("dark-map", Boolean(isDark));
+    }
   }
 
   function exportPlan() {
@@ -941,7 +966,7 @@
       selectedTab: "itinerary",
       selectedDay: "day1",
       weatherMode: "sun",
-      darkMode: false,
+      darkMode: true,
       departureTimes: {
         day1: "09:00",
         day2: "09:30",
@@ -963,7 +988,7 @@
       selectedTab: SUPPORTED_TABS.includes(source?.selectedTab) ? source.selectedTab : defaults.selectedTab,
       selectedDay: DAYS.includes(source?.selectedDay) ? source.selectedDay : defaults.selectedDay,
       weatherMode: source?.weatherMode === "rain" ? "rain" : "sun",
-      darkMode: Boolean(source?.darkMode),
+      darkMode: typeof source?.darkMode === "boolean" ? source.darkMode : defaults.darkMode,
       departureTimes: normalizeDepartureTimes(source?.departureTimes, defaults.departureTimes),
       itinerary: normalizeItinerary(source?.itinerary || defaults.itinerary),
       filters: normalizeFilters(source?.filters),
@@ -1130,6 +1155,48 @@
 
   function deepClone(value) {
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function categoryClass(category) {
+    return `cat-${normalize(category || "general")
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")}`;
+  }
+
+  function getCategoryIcon(category) {
+    const iconMap = {
+      museo: "MU",
+      paseo: "PS",
+      mirador: "MR",
+      ciencia: "SC",
+      "street-art": "SA",
+      mercado: "MK",
+      parque: "PK",
+      experiencia: "XP",
+      zoo: "ZO",
+      barco: "BR",
+      transporte: "TR",
+      historia: "HS"
+    };
+    return iconMap[categoryClass(category).replace("cat-", "")] || "PO";
+  }
+
+  function categoryColor(category) {
+    const colorMap = {
+      museo: "#4ea5ff",
+      paseo: "#7be495",
+      mirador: "#ffb04a",
+      ciencia: "#4dd0e1",
+      "street-art": "#b980ff",
+      mercado: "#ff7f7f",
+      parque: "#4bcf89",
+      experiencia: "#ffd166",
+      zoo: "#f29e4c",
+      barco: "#3c8dff",
+      transporte: "#d16dff",
+      historia: "#f4c95d"
+    };
+    return colorMap[categoryClass(category).replace("cat-", "")] || "#ff4b3e";
   }
 
   function capitalize(value) {
