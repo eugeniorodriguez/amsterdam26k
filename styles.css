@@ -221,43 +221,11 @@ label.file-chip:focus-within,
   font-size: 0.9rem;
 }
 
-.travel-strip {
-  margin: 10px clamp(14px, 3vw, 36px) 0;
-  padding: 10px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  border: 1px solid color-mix(in srgb, var(--brand) 24%, var(--border));
-}
-
-.travel-card {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 10px;
-  background: var(--surface-2);
-}
-
-.travel-card h3 {
-  margin: 0 0 6px;
-  font-size: 0.86rem;
-}
-
-.travel-card p {
-  margin: 3px 0;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.travel-card-hotel {
-  border-color: color-mix(in srgb, var(--brand) 40%, var(--border));
-  background: color-mix(in srgb, var(--brand) 10%, var(--surface-2));
-}
-
 .tab-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px clamp(14px, 3vw, 36px);
+  padding: 4px 0 2px;
 }
 
 .tab-nav button {
@@ -323,80 +291,6 @@ label.file-chip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-}
-
-.departure-mini {
-  margin-top: 12px;
-}
-
-.departure-card {
-  padding: 12px;
-  background:
-    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 34%),
-    var(--surface);
-}
-
-.departure-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.departure-head h3 {
-  margin: 0;
-  font-size: 1rem;
-}
-
-.departure-head p {
-  margin: 3px 0 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
-.departure-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 7px;
-}
-
-.departure-item {
-  display: grid;
-  grid-template-columns: 90px minmax(0, 1fr);
-  gap: 10px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface-2);
-  padding: 8px;
-}
-
-.departure-time {
-  color: color-mix(in srgb, var(--brand) 82%, #fff 18%);
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.departure-content h4 {
-  margin: 0;
-  font-size: 0.88rem;
-}
-
-.departure-content p {
-  margin: 3px 0 0;
-  color: var(--muted);
-  font-size: 0.78rem;
-}
-
-.departure-foot {
-  margin-top: 8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
 }
 
 .segment-column {
@@ -780,6 +674,36 @@ label.file-chip {
   gap: 12px;
 }
 
+.base-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.base-card {
+  padding: 14px;
+}
+
+.base-card h3 {
+  margin: 0 0 8px;
+  font-size: 0.96rem;
+}
+
+.base-card p {
+  margin: 4px 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.base-card ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
 .tip-card,
 .checklist-card,
 .options-grid .card {
@@ -891,13 +815,10 @@ label.file-chip {
 
 @media (max-width: 1120px) {
   .itinerary-grid,
+  .base-grid,
   .tips-layout,
   .options-grid {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .travel-strip {
-    grid-template-columns: 1fr;
   }
 
   .map-layout {
@@ -915,32 +836,14 @@ label.file-chip {
 
 @media (max-width: 760px) {
   .itinerary-grid,
+  .base-grid,
   .tips-layout,
   .options-grid {
     grid-template-columns: 1fr;
   }
 
-  .travel-strip {
-    margin-top: 8px;
-    padding: 8px;
-  }
-
-  .tab-nav {
-    position: sticky;
-    top: 114px;
-    z-index: 920;
-    background: color-mix(in srgb, var(--surface) 92%, transparent);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(8px);
-  }
-
   .tab-nav button {
     font-size: 0.82rem;
-  }
-
-  .departure-item {
-    grid-template-columns: 1fr;
-    gap: 4px;
   }
 
   #map {

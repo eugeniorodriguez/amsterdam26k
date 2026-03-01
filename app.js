@@ -2,7 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "amsterdam26k-planner-v1";
-  const SUPPORTED_TABS = ["itinerary", "map", "checklist", "options"];
+  const SUPPORTED_TABS = ["itinerary", "map", "checklist", "pretrip", "base-data", "options"];
   const DEFAULT_FILTERS = {
     day: "all",
     category: "all",
@@ -42,12 +42,13 @@
   function init() {
     cacheDom();
     injectTripMeta();
-    renderTravelLogistics();
     populateDayFilter();
     populateCategoryFilter();
     bindGlobalEvents();
     renderDaySwitcher();
     renderChecklist();
+    renderPretripChecklist();
+    renderBaseData();
     syncControlsFromState();
     applyTheme(appState.darkMode);
     renderItinerary();
@@ -61,10 +62,8 @@
     dom.appTitle = document.getElementById("app-title");
     dom.appSubtitle = document.getElementById("app-subtitle");
     dom.globalWarning = document.getElementById("global-warning");
-    dom.travelStrip = document.getElementById("travel-strip");
 
     dom.daySwitcher = document.getElementById("day-switcher");
-    dom.weatherButtons = Array.from(document.querySelectorAll("[data-weather]"));
     dom.darkModeToggle = document.getElementById("dark-mode-toggle");
     dom.darkModeToggleAlt = document.getElementById("btn-dark-mode-alt");
 
@@ -76,12 +75,14 @@
       itinerary: document.getElementById("tab-itinerary"),
       map: document.getElementById("tab-map"),
       checklist: document.getElementById("tab-checklist"),
+      pretrip: document.getElementById("tab-pretrip"),
+      "base-data": document.getElementById("tab-base-data"),
       options: document.getElementById("tab-options")
     };
 
     dom.departureTime = document.getElementById("departure-time");
     dom.itineraryDayView = document.getElementById("itinerary-day-view");
-    dom.departureMini = document.getElementById("departure-mini");
+    dom.baseDataGrid = document.getElementById("base-data-grid");
 
     dom.btnExport = document.getElementById("btn-export");
     dom.btnExportAlt = document.getElementById("btn-export-alt");
@@ -103,6 +104,7 @@
     dom.poiList = document.getElementById("poi-list");
 
     dom.checklistGroups = document.getElementById("checklist-groups");
+    dom.pretripChecklistGroups = document.getElementById("pretrip-checklist-groups");
     dom.btnResetProgress = document.getElementById("btn-reset-progress");
 
     dom.toastContainer = document.getElementById("toast-container");
@@ -117,60 +119,8 @@
     }
   }
 
-  function renderTravelLogistics() {
-    if (!dom.travelStrip) return;
-
-    const logistics = window.TRAVEL_LOGISTICS;
-    const hotel = logistics?.hotel || window.HOTEL_REFERENCE || null;
-    const flights = Array.isArray(logistics?.flights) ? logistics.flights : [];
-
-    if (!hotel && !flights.length) {
-      dom.travelStrip.hidden = true;
-      return;
-    }
-
-    const flightCards = flights
-      .map((flight) => {
-        return `
-          <article class="travel-card">
-            <h3>${escapeHtml(flight.ruta || "Vuelo")}</h3>
-            <p><strong>${escapeHtml(flight.numero || "")}</strong></p>
-            <p>Salida: ${escapeHtml(flight.salida || "-")}</p>
-            <p>Llegada: ${escapeHtml(flight.llegada || "-")}</p>
-            ${flight.equipaje_apertura ? `<p>Equipaje: ${escapeHtml(flight.equipaje_apertura)} - ${escapeHtml(flight.equipaje_cierre || "")}</p>` : ""}
-            ${flight.nota ? `<p>${escapeHtml(flight.nota)}</p>` : ""}
-          </article>
-        `;
-      })
-      .join("");
-
-    dom.travelStrip.innerHTML = `
-      <article class="travel-card travel-card-hotel">
-        <h3>Hotel base (referencia fija en mapa)</h3>
-        <p><strong>${escapeHtml(hotel?.nombre || "")}</strong></p>
-        <p>${escapeHtml(hotel?.direccion || "")}</p>
-        <p>Check-in ${escapeHtml(hotel?.checkin || "-")} · Check-out ${escapeHtml(hotel?.checkout || "-")}</p>
-        <p>Hotel: ${escapeHtml(hotel?.telefono_hotel || "-")} · Reservas: ${escapeHtml(hotel?.telefono_reservas || "-")}</p>
-      </article>
-      ${flightCards}
-    `;
-  }
-
   function bindGlobalEvents() {
     dom.daySwitcher.addEventListener("click", onDayChange);
-
-    dom.weatherButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const mode = button.dataset.weather;
-        if (!mode || mode === appState.weatherMode) return;
-        appState.weatherMode = mode;
-        syncControlsFromState();
-        renderItinerary();
-        refreshMap();
-        saveState();
-        showToast(mode === "sun" ? "Plan A activado" : "Plan B activado");
-      });
-    });
 
     dom.darkModeToggle.addEventListener("click", toggleTheme);
     dom.darkModeToggleAlt.addEventListener("click", toggleTheme);
@@ -239,6 +189,7 @@
     });
 
     dom.checklistGroups.addEventListener("change", onChecklistChange);
+    dom.pretripChecklistGroups.addEventListener("change", onChecklistChange);
 
     dom.btnResetProgress.addEventListener("click", () => {
       const ok = window.confirm("Esto reinicia progreso, favoritos y filtros. ¿Continuar?");
@@ -251,6 +202,8 @@
       syncControlsFromState();
       renderDaySwitcher();
       renderChecklist();
+      renderPretripChecklist();
+      renderBaseData();
       renderItinerary();
       refreshMap();
       updateCounters();
@@ -286,12 +239,6 @@
   }
 
   function syncControlsFromState() {
-    dom.weatherButtons.forEach((button) => {
-      const active = button.dataset.weather === appState.weatherMode;
-      button.classList.toggle("active", active);
-      button.setAttribute("aria-pressed", String(active));
-    });
-
     dom.departureTime.value = appState.departureTimes[appState.selectedDay] || "";
 
     dom.filterDay.value = appState.filters.day;
@@ -324,7 +271,7 @@
       header.innerHTML = `
         <div>
           <h2>${window.SEGMENT_LABELS?.[segment] || segment}</h2>
-          <p class="segment-sub">${appState.weatherMode === "sun" ? "Plan A" : "Plan B"} activo</p>
+          <p class="segment-sub">${window.DAY_LABELS?.[day] || day}</p>
         </div>
         <span class="badge">${(dayData[segment] || []).length} paradas</span>
       `;
@@ -397,53 +344,7 @@
     });
 
     initSortables();
-    renderDepartureMini();
     updateCounters();
-  }
-
-  function renderDepartureMini() {
-    if (!dom.departureMini) return;
-    const departurePlan = window.DEPARTURE_DAY_PLAN;
-    if (!departurePlan) {
-      dom.departureMini.hidden = true;
-      return;
-    }
-
-    const inboundFlight = (window.TRAVEL_LOGISTICS?.flights || []).find((flight) => flight.numero === "HV6227");
-    const hotel = window.HOTEL_REFERENCE;
-
-    const rows = (departurePlan.items || [])
-      .map((item) => {
-        return `
-          <li class="departure-item">
-            <span class="departure-time">${escapeHtml(item.hora || "-")}</span>
-            <div class="departure-content">
-              <h4>${escapeHtml(item.titulo || "")}</h4>
-              <p>${escapeHtml(item.detalle || "")}</p>
-            </div>
-          </li>
-        `;
-      })
-      .join("");
-
-    dom.departureMini.hidden = false;
-    dom.departureMini.innerHTML = `
-      <article class="departure-card card">
-        <header class="departure-head">
-          <div>
-            <h3>${escapeHtml(departurePlan.label || "Día de salida")}</h3>
-            <p>${escapeHtml(departurePlan.subtitle || "")}</p>
-          </div>
-          <span class="badge">No editable</span>
-        </header>
-        <ul class="departure-list">${rows}</ul>
-        <footer class="departure-foot">
-          <span class="badge">Hotel base: ${escapeHtml(hotel?.nombre || "Best Western Amsterdam")}</span>
-          <span class="badge">Check-out: ${escapeHtml(hotel?.checkout || "11:00 CEST")}</span>
-          <span class="badge">Vuelo: ${escapeHtml(inboundFlight?.numero || "HV6227")} · ${escapeHtml(inboundFlight?.salida || "20:15")}</span>
-        </footer>
-      </article>
-    `;
   }
 
   function initSortables() {
@@ -681,6 +582,7 @@
 
     SEGMENTS.forEach((segment) => {
       (dayData[segment] || []).forEach((entry) => {
+        if (entry.poiId) set.add(entry.poiId);
         if (entry.planA) set.add(entry.planA);
         if (entry.planB) set.add(entry.planB);
       });
@@ -974,6 +876,113 @@
     });
   }
 
+  function renderPretripChecklist() {
+    const items = window.PRETRIP_CHECKLIST_ITEMS || [];
+    if (!dom.pretripChecklistGroups) return;
+    const grouped = items.reduce((acc, item) => {
+      if (!acc[item.grupo]) acc[item.grupo] = [];
+      acc[item.grupo].push(item);
+      return acc;
+    }, {});
+
+    dom.pretripChecklistGroups.innerHTML = "";
+
+    Object.entries(grouped).forEach(([groupName, groupItems]) => {
+      const section = document.createElement("section");
+      section.className = "checklist-group";
+
+      const h3 = document.createElement("h3");
+      h3.textContent = capitalize(groupName);
+      section.appendChild(h3);
+
+      groupItems.forEach((item) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "check-item";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = item.id;
+        checkbox.dataset.checkId = item.id;
+        checkbox.checked = Boolean(appState.checklist[item.id]);
+
+        const label = document.createElement("label");
+        label.setAttribute("for", item.id);
+        label.textContent = item.texto;
+
+        wrapper.appendChild(checkbox);
+        wrapper.appendChild(label);
+        section.appendChild(wrapper);
+      });
+
+      dom.pretripChecklistGroups.appendChild(section);
+    });
+  }
+
+  function renderBaseData() {
+    if (!dom.baseDataGrid) return;
+
+    const logistics = window.TRAVEL_LOGISTICS || {};
+    const hotel = logistics.hotel || window.HOTEL_REFERENCE || {};
+    const flights = Array.isArray(logistics.flights) ? logistics.flights : [];
+    const road = Array.isArray(logistics.road_logistics) ? logistics.road_logistics : [];
+    const airports = logistics.airports || {};
+    const parking = logistics.parking || {};
+
+    const flightHtml = flights
+      .map((flight) => {
+        return `
+          <article class="card base-card">
+            <h3>${escapeHtml(flight.ruta || "Vuelo")}</h3>
+            <p><strong>${escapeHtml(flight.numero || "")}</strong></p>
+            <p>Salida: ${escapeHtml(flight.salida || "-")}</p>
+            <p>Llegada: ${escapeHtml(flight.llegada || "-")}</p>
+            ${flight.equipaje_apertura ? `<p>Facturación equipaje: ${escapeHtml(flight.equipaje_apertura)} - ${escapeHtml(flight.equipaje_cierre || "")}</p>` : ""}
+            ${flight.nota ? `<p>${escapeHtml(flight.nota)}</p>` : ""}
+          </article>
+        `;
+      })
+      .join("");
+
+    const roadHtml = road
+      .map((item) => `<li><strong>${escapeHtml(item.fecha || "")}</strong>: ${escapeHtml(item.tramo || "")}. ${escapeHtml(item.nota || "")}</li>`)
+      .join("");
+
+    const parkingHtml = (parking.recomendaciones || [])
+      .map((item) => `<li>${escapeHtml(item)}</li>`)
+      .join("");
+
+    dom.baseDataGrid.innerHTML = `
+      <article class="card base-card">
+        <h3>Hotel</h3>
+        <p><strong>${escapeHtml(hotel.nombre || "")}</strong></p>
+        <p>${escapeHtml(hotel.direccion || "")}</p>
+        <p>Check-in: ${escapeHtml(hotel.checkin || "-")} · Check-out: ${escapeHtml(hotel.checkout || "-")}</p>
+        <p>Hotel: ${escapeHtml(hotel.telefono_hotel || "-")} · Reservas: ${escapeHtml(hotel.telefono_reservas || "-")}</p>
+      </article>
+
+      ${flightHtml}
+
+      <article class="card base-card">
+        <h3>Aeropuertos</h3>
+        <p><strong>${escapeHtml(airports.malaga?.nombre || "")}</strong></p>
+        <p>${escapeHtml(airports.malaga?.direccion || "")}</p>
+        <p><strong>${escapeHtml(airports.amsterdam?.nombre || "")}</strong></p>
+        <p>${escapeHtml(airports.amsterdam?.direccion || "")}</p>
+      </article>
+
+      <article class="card base-card">
+        <h3>Logística carretera (Sevilla-Málaga)</h3>
+        <ul>${roadHtml}</ul>
+      </article>
+
+      <article class="card base-card">
+        <h3>Parking aeropuerto Málaga (AGP)</h3>
+        <p><strong>${escapeHtml(parking.aeropuerto || "AGP")}</strong></p>
+        <ul>${parkingHtml}</ul>
+      </article>
+    `;
+  }
+
   function onChecklistChange(event) {
     const checkbox = event.target.closest("input[data-check-id]");
     if (!checkbox) return;
@@ -1052,6 +1061,8 @@
     applyTheme(appState.darkMode);
     renderDaySwitcher();
     renderChecklist();
+    renderPretripChecklist();
+    renderBaseData();
     syncControlsFromState();
     renderItinerary();
     refreshMap();
@@ -1079,7 +1090,6 @@
     return {
       selectedTab: appState.selectedTab,
       selectedDay: appState.selectedDay,
-      weatherMode: appState.weatherMode,
       darkMode: appState.darkMode,
       departureTimes: { ...appState.departureTimes },
       itinerary: deepClone(appState.itinerary),
@@ -1120,7 +1130,6 @@
     return {
       selectedTab: "itinerary",
       selectedDay: "day1",
-      weatherMode: "sun",
       darkMode: true,
       departureTimes: {
         day1: "09:00",
@@ -1143,7 +1152,6 @@
       ...defaults,
       selectedTab: SUPPORTED_TABS.includes(source?.selectedTab) ? source.selectedTab : defaults.selectedTab,
       selectedDay: DAYS.includes(source?.selectedDay) ? source.selectedDay : defaults.selectedDay,
-      weatherMode: source?.weatherMode === "rain" ? "rain" : "sun",
       darkMode: typeof source?.darkMode === "boolean" ? source.darkMode : defaults.darkMode,
       departureTimes: normalizeDepartureTimes(source?.departureTimes, defaults.departureTimes),
       itinerary: normalizeItinerary(source?.itinerary || defaults.itinerary),
@@ -1189,6 +1197,9 @@
     (window.CHECKLIST_ITEMS || []).forEach((item) => {
       safe[item.id] = Boolean(checklist[item.id]);
     });
+    (window.PRETRIP_CHECKLIST_ITEMS || []).forEach((item) => {
+      safe[item.id] = Boolean(checklist[item.id]);
+    });
     return safe;
   }
 
@@ -1210,7 +1221,7 @@
         if (!Array.isArray(incoming)) return;
         base[day][segment] = incoming
           .map((entry) => normalizeEntry(entry))
-          .filter((entry) => entry && (poiById.has(entry.planA) || poiById.has(entry.planB)));
+          .filter((entry) => entry && poiById.has(entry.poiId));
       });
     });
     return base;
@@ -1219,24 +1230,22 @@
   function normalizeEntry(entry) {
     if (!entry || typeof entry !== "object") return null;
 
-    let planA = poiById.has(entry.planA) ? entry.planA : null;
-    let planB = poiById.has(entry.planB) ? entry.planB : null;
-
-    if (!planA && planB) planA = planB;
-    if (!planB && planA) planB = planA;
-    if (!planA && !planB) return null;
+    let poiId = poiById.has(entry.poiId) ? entry.poiId : null;
+    if (!poiId && poiById.has(entry.planA)) poiId = entry.planA;
+    if (!poiId && poiById.has(entry.planB)) poiId = entry.planB;
+    if (!poiId) return null;
 
     return {
       entryId: typeof entry.entryId === "string" && entry.entryId ? entry.entryId : nextEntryId(),
-      planA,
-      planB
+      poiId,
+      planA: poiId,
+      planB: poiId
     };
   }
 
   function getPoiForEntry(entry) {
     if (!entry) return null;
-    const activeId = appState.weatherMode === "sun" ? entry.planA : entry.planB;
-    return poiById.get(activeId) || poiById.get(entry.planA) || poiById.get(entry.planB) || null;
+    return poiById.get(entry.poiId || entry.planA || entry.planB) || null;
   }
 
   function populateCategoryFilter() {

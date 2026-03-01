@@ -1,6 +1,6 @@
 window.TRIP_META = {
-  title: "Qué ver en Ámsterdam (10-13 julio 2026)",
-  subtitle: "Viaje familiar con niños/as: llegada vie 10 jul, regreso lun 13 jul",
+  title: "Qué ver en Ámsterdam",
+  subtitle: "Viaje del 10 al 13 de julio de 2026 (familias con niños/as)",
   warning: "Horarios y entradas cambian; verifica siempre en la web oficial."
 };
 
@@ -35,6 +35,38 @@ window.HOTEL_REFERENCE = {
 
 window.TRAVEL_LOGISTICS = {
   hotel: window.HOTEL_REFERENCE,
+  airports: {
+    malaga: {
+      nombre: "Aeropuerto de Málaga-Costa del Sol (AGP)",
+      direccion: "Av. del Comandante García Morato s/n, Churriana, 29004 Málaga"
+    },
+    amsterdam: {
+      nombre: "Amsterdam Airport Schiphol (AMS)",
+      direccion: "Aankomstpassage 1, 1118 AX Schiphol, Países Bajos"
+    }
+  },
+  road_logistics: [
+    {
+      id: "road-outbound",
+      fecha: "Viernes 10 julio 2026 (mañana)",
+      tramo: "Sevilla -> Aeropuerto de Málaga",
+      nota: "Salida recomendada 05:45-06:15 para llegar con margen al cierre de equipaje (10:40)."
+    },
+    {
+      id: "road-return",
+      fecha: "Lunes 13 julio 2026 (noche)",
+      tramo: "Aeropuerto de Málaga -> Sevilla",
+      nota: "Tras aterrizar 23:15, recoger coche y volver por A-92 en conducción descansada."
+    }
+  ],
+  parking: {
+    aeropuerto: "Aeropuerto de Málaga (AGP)",
+    recomendaciones: [
+      "Reservar parking con antelación (AENA oficial o parking privado con transfer).",
+      "Guardar foto de plaza/sector y ticket en móvil.",
+      "Calcular 10-15 min extra para aparcar y llegar a terminal."
+    ]
+  },
   flights: [
     {
       id: "outbound-eju7890",
@@ -52,38 +84,6 @@ window.TRAVEL_LOGISTICS = {
       salida: "Lunes 13 julio 2026, 20:15",
       llegada: "Lunes 13 julio 2026, 23:15",
       nota: "Recomendado salir del hotel hacia Schiphol sobre las 17:00-17:30."
-    }
-  ]
-};
-
-window.DEPARTURE_DAY_PLAN = {
-  label: "13 de julio (salida)",
-  subtitle: "Mini-vista operativa no editable",
-  items: [
-    {
-      hora: "08:30",
-      titulo: "Desayuno y cierre de maletas",
-      detalle: "Revisar documentos, pasaportes, cargadores y objetos de valor."
-    },
-    {
-      hora: "11:00",
-      titulo: "Check-out en Best Western Amsterdam",
-      detalle: "Dejar equipaje en consigna del hotel para aprovechar el día."
-    },
-    {
-      hora: "12:00-16:30",
-      titulo: "Bloque flexible de despedida",
-      detalle: "Plan A: paseo suave + comida. Plan B: opción indoor cercana."
-    },
-    {
-      hora: "17:00-17:30",
-      titulo: "Salida al aeropuerto Schiphol",
-      detalle: "Recomendado para llegar con margen al vuelo HV6227 (20:15)."
-    },
-    {
-      hora: "20:15",
-      titulo: "Vuelo de regreso HV6227",
-      detalle: "Salida Ámsterdam (Schiphol) -> llegada Málaga 23:15."
     }
   ]
 };
@@ -842,6 +842,10 @@ window.DEFAULT_ITINERARY = {
 };
 
 window.CHECKLIST_ITEMS = [
+  { id: "chk-sevilla-malaga-out", grupo: "carretera", texto: "10/07 por la mañana: salida Sevilla -> Málaga con margen para facturación." },
+  { id: "chk-sevilla-malaga-back", grupo: "carretera", texto: "13/07 por la noche: vuelta Málaga -> Sevilla tras aterrizar (23:15)." },
+  { id: "chk-parking-booking", grupo: "parking", texto: "Reservar parking en AGP con antelación y confirmar horarios de acceso/salida." },
+  { id: "chk-parking-notes", grupo: "parking", texto: "Guardar planta/plaza del coche y ticket del parking en el móvil." },
   { id: "chk-outbound-bagdrop", grupo: "vuelos", texto: "10/07: facturar equipaje entre 09:20 y 10:40 para EJU7890." },
   { id: "chk-outbound-arrival", grupo: "vuelos", texto: "10/07 llegada 14:25 a Schiphol, luego traslado al hotel." },
   { id: "chk-return-transfer", grupo: "vuelos", texto: "13/07 salir del hotel 17:00-17:30 para vuelo HV6227 (20:15)." },
@@ -849,9 +853,9 @@ window.CHECKLIST_ITEMS = [
   { id: "chk-ov-card", grupo: "transporte", texto: "Comprar o activar OVpay / tarjeta para tranvía y metro." },
   { id: "chk-ferry", grupo: "transporte", texto: "Recordar ferry gratis a Noord desde Centraal." },
   { id: "chk-bike-rules", grupo: "transporte", texto: "Repasar reglas de carril bici para todo el grupo." },
-  { id: "chk-meeting-point", grupo: "grupo", texto: "Definir punto de encuentro fijo por cada franja del dia." },
+  { id: "chk-meeting-point", grupo: "grupo", texto: "Definir punto de encuentro fijo por cada franja del día." },
   { id: "chk-buffer", grupo: "grupo", texto: "Añadir buffer de 15-20 min entre actividades para 4 familias." },
-  { id: "chk-headcount", grupo: "grupo", texto: "Hacer recuento rapido antes de moveros de barrio." },
+  { id: "chk-headcount", grupo: "grupo", texto: "Hacer recuento rápido antes de moveros de barrio." },
   { id: "chk-bookings", grupo: "reservas", texto: "Revisar reservas de museos y experiencias 24h antes." },
   { id: "chk-food", grupo: "reservas", texto: "Tener opción de comida rápida para grupos grandes." },
   { id: "chk-rain-jacket", grupo: "lluvia", texto: "Llevar chubasquero ligero y funda impermeable para mochilas." },
@@ -860,6 +864,27 @@ window.CHECKLIST_ITEMS = [
   { id: "chk-offline", grupo: "tecnico", texto: "Guardar capturas de tickets y plan por si falla internet." },
   { id: "chk-medical", grupo: "seguridad", texto: "Pequeño botiquín y medicación esencial para el grupo." },
   { id: "chk-emergency", grupo: "seguridad", texto: "Compartir números de emergencia y ubicación del alojamiento." }
+];
+
+window.PRETRIP_CHECKLIST_ITEMS = [
+  { id: "pre-doc-passport", grupo: "documentacion", texto: "Pasaportes / DNI vigentes para todo el grupo." },
+  { id: "pre-doc-tse", grupo: "documentacion", texto: "Tarjeta Sanitaria Europea (TSE) solicitada o vigente." },
+  { id: "pre-doc-insurance", grupo: "documentacion", texto: "Seguro de viaje y teléfonos de asistencia guardados." },
+  { id: "pre-vuelos-checkin", grupo: "vuelos", texto: "Check-in online completado en ambos vuelos." },
+  { id: "pre-vuelos-boarding", grupo: "vuelos", texto: "Tarjetas de embarque en móvil y copia impresa." },
+  { id: "pre-vuelos-seats", grupo: "vuelos", texto: "Asientos revisados para mantener familias juntas." },
+  { id: "pre-equipaje-hand", grupo: "equipaje", texto: "Equipaje de mano con líquidos/documentación en orden." },
+  { id: "pre-equipaje-checked", grupo: "equipaje", texto: "Maletas facturadas etiquetadas y pesadas en casa." },
+  { id: "pre-tech-chargers", grupo: "tecnologia", texto: "Cargadores, cables y powerbanks listos." },
+  { id: "pre-tech-adapter", grupo: "tecnologia", texto: "Adaptadores/regletas y baterías externas cargadas." },
+  { id: "pre-apps", grupo: "tecnologia", texto: "Apps de aerolínea/mapas/transporte instaladas y logueadas." },
+  { id: "pre-clothes-rain", grupo: "ropa", texto: "Ropa por capas y chubasquero para lluvia." },
+  { id: "pre-clothes-shoes", grupo: "ropa", texto: "Calzado cómodo + recambio (calcetines extra)." },
+  { id: "pre-health-meds", grupo: "salud", texto: "Medicación habitual y botiquín básico preparado." },
+  { id: "pre-pay-cards", grupo: "pagos", texto: "Tarjetas bancarias activas para uso internacional." },
+  { id: "pre-pay-cash", grupo: "pagos", texto: "Algo de efectivo en euros para emergencias." },
+  { id: "pre-car-sevilla", grupo: "coche", texto: "Ruta Sevilla -> AGP confirmada y salida temprana planificada." },
+  { id: "pre-car-parking", grupo: "coche", texto: "Parking AGP reservado + localizador y condiciones guardadas." }
 ];
 
 window.CATEGORIES = [

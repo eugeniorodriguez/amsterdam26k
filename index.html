@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Plan interactivo de 3 días para visitar Ámsterdam con 4 familias." />
+    <meta name="description" content="Plan interactivo para visitar Ámsterdam del 10 al 13 de julio de 2026." />
     <meta name="theme-color" content="#0a5d5d" />
-    <title>Qué ver en Ámsterdam (10-13 julio 2026)</title>
+    <title>Qué ver en Ámsterdam</title>
 
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg" />
@@ -31,7 +31,7 @@
     <header class="topbar">
       <div class="brand-block">
         <p class="eyebrow">Travel Planner familiar</p>
-        <h1 id="app-title">Qué ver en Ámsterdam (10-13 julio 2026)</h1>
+        <h1 id="app-title">Qué ver en Ámsterdam</h1>
         <p id="app-subtitle"></p>
       </div>
 
@@ -39,14 +39,6 @@
         <div class="control-group" role="group" aria-label="Selección de día">
           <span class="control-label">Día</span>
           <div id="day-switcher" class="switcher"></div>
-        </div>
-
-        <div class="control-group" role="group" aria-label="Modo de clima">
-          <span class="control-label">Modo</span>
-          <div class="switcher" id="weather-switcher">
-            <button class="chip" data-weather="sun" type="button">Sol (Plan A)</button>
-            <button class="chip" data-weather="rain" type="button">Lluvia (Plan B)</button>
-          </div>
         </div>
 
         <div class="control-group stats">
@@ -59,25 +51,30 @@
           Dark mode
         </button>
       </div>
+
+      <nav class="tab-nav" role="tablist" aria-label="Secciones principales">
+        <button role="tab" aria-selected="true" aria-controls="tab-itinerary" id="btn-itinerary" data-tab="itinerary">
+          Itinerario
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="tab-map" id="btn-map" data-tab="map">
+          Mapa
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="tab-checklist" id="btn-checklist" data-tab="checklist">
+          Checklist & Tips
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="tab-pretrip" id="btn-pretrip" data-tab="pretrip">
+          Preparativos viaje
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="tab-base-data" id="btn-base-data" data-tab="base-data">
+          Datos base
+        </button>
+        <button role="tab" aria-selected="false" aria-controls="tab-options" id="btn-options" data-tab="options">
+          Opciones
+        </button>
+      </nav>
     </header>
 
     <p class="global-warning" role="note" id="global-warning"></p>
-    <section id="travel-strip" class="travel-strip card" aria-label="Resumen de hotel y vuelos"></section>
-
-    <nav class="tab-nav" role="tablist" aria-label="Secciones principales">
-      <button role="tab" aria-selected="true" aria-controls="tab-itinerary" id="btn-itinerary" data-tab="itinerary">
-        Itinerario (10-13 julio)
-      </button>
-      <button role="tab" aria-selected="false" aria-controls="tab-map" id="btn-map" data-tab="map">
-        Mapa
-      </button>
-      <button role="tab" aria-selected="false" aria-controls="tab-checklist" id="btn-checklist" data-tab="checklist">
-        Checklist & Tips
-      </button>
-      <button role="tab" aria-selected="false" aria-controls="tab-options" id="btn-options" data-tab="options">
-        Opciones
-      </button>
-    </nav>
 
     <main id="main-content" class="main-content">
       <section id="tab-itinerary" class="tab-panel active" role="tabpanel" aria-labelledby="btn-itinerary">
@@ -92,7 +89,6 @@
         </div>
 
         <div id="itinerary-day-view" class="itinerary-grid" aria-live="polite"></div>
-        <div id="departure-mini" class="departure-mini" aria-live="polite"></div>
       </section>
 
       <section id="tab-map" class="tab-panel" role="tabpanel" aria-labelledby="btn-map" hidden>
@@ -178,6 +174,9 @@
             <ul>
               <li>Tranvía/metro: usa OVpay o tarjetas recargables para moverte rápido con grupo grande.</li>
               <li>Ferry gratis a Noord: sale desde detrás de Centraal y es perfecto para ir a A'DAM, Eye y STRAAT.</li>
+              <li>10 de julio: salida en coche desde Sevilla por la mañana hacia el aeropuerto de Málaga.</li>
+              <li>Parking AGP: reserva previa, foto de plaza y margen adicional para llegar a terminal.</li>
+              <li>13 de julio: regreso en coche Málaga -> Sevilla tras aterrizar (23:15).</li>
               <li>Caminar y bici: ideal para distancias cortas, pero mantener siempre al grupo fuera del carril bici.</li>
               <li>Puntos de encuentro: define uno por mañana, tarde y noche para evitar dispersión.</li>
               <li>Buffers: suma 15-20 min entre paradas (4 familias tardan más en reagruparse).</li>
@@ -190,9 +189,9 @@
             <h2>Kit lluvia + plan indoor</h2>
             <ul>
               <li>Chubasqueros ligeros, funda impermeable y calcetín extra por persona.</li>
-              <li>Ten siempre un Plan B indoor por franja (museo, experiencia inmersiva o food hall).</li>
+              <li>Ten siempre alternativa indoor por franja (museo, experiencia inmersiva o food hall).</li>
               <li>Cuando llueva fuerte, agrupa actividades por zona para reducir traslados.</li>
-              <li>Usa el toggle Sol/Lluvia para cambiar todo el itinerario en segundos.</li>
+              <li>Prioriza recorridos cortos y zonas cubiertas cuando cambie el tiempo.</li>
             </ul>
           </article>
 
@@ -200,6 +199,20 @@
             <h2>Checklist compartible</h2>
             <p>Todo se guarda automáticamente en este navegador.</p>
             <div id="checklist-groups"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="tab-base-data" class="tab-panel" role="tabpanel" aria-labelledby="btn-base-data" hidden>
+        <div id="base-data-grid" class="base-grid"></div>
+      </section>
+
+      <section id="tab-pretrip" class="tab-panel" role="tabpanel" aria-labelledby="btn-pretrip" hidden>
+        <div class="tips-layout">
+          <article class="card checklist-card">
+            <h2>Checklist preparativos viaje</h2>
+            <p>Marca lo que ya esté listo antes de salir de casa.</p>
+            <div id="pretrip-checklist-groups"></div>
           </article>
         </div>
       </section>
